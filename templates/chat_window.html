@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Messenger</title>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+</head>
+<body>
+    <h2>Welcome, {{ username }}!</h2>
+
+    <!-- Search for users -->
+    <input type="text" id="searchUser" placeholder="Search username">
+    <button onclick="searchAndSendInvite()">Send Invite</button>
+
+    <!-- List of added contacts -->
+    <h3>Contacts:</h3>
+    <ul id="contactList"></ul>
+
+    <!-- Chat Area -->
+    <div id="chatSection" style="display:none;">
+        <h3>Chat with <span id="chatWith"></span></h3>
+        <div id="chatBox" style="border:1px solid black; height:200px; overflow-y:scroll;"></div>
+        <input type="text" id="messageInput" placeholder="Type a message">
+        <button onclick="sendMessage()">Send</button>
+    </div>
+
+    <script>
+        const currentUser = "{{ username }}";
+
+        // TODO: Add Firebase config here
+
+        // Placeholder: You'll implement these
+        function searchAndSendInvite() {
+            const toUser = document.getElementById("searchUser").value;
+            alert("You sent an invite to " + toUser);
+        }
+
+        function sendMessage() {
+            const message = document.getElementById("messageInput").value;
+            alert("Sent: " + message);
+        }
+    </script>
+</body>
+</html>

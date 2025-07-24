@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+  <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Sigmar+One" />
+  <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Lemon"
+<head>
+  <title>Chat with {{ contact }}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: gray;
+    }
+    .chat-container {
+      display: flex;
+      height: 100vh;
+      background-color: gray;
+    }
+    .sidebar {
+      width: 250px;
+      background-color: #2d2d2d;
+      color: white;
+      padding: 20px;
+    }
+    .chat-area {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background-color: gray;
+    }
+    .chat-header {
+      background-color: black;
+      color: white;
+      padding: 15px;
+      font-size: 18px;
+      font-weight: bold;
+    }
+    #messages {
+      flex: 1;
+      padding: 15px;
+      overflow-y: scroll;
+      background-color: gray;
+    }
+    .message {
+      margin: 10px 0;
+      max-width: 70%;
+      padding: 10px;
+      border-radius: 10px;
+      clear: both;
+      
+    }
+    .me {
+      background-color: #593e69;
+      align-self: flex-end;
+      margin-left: auto;
+      font-family: Lemon; 
+      color: #0090ad
+    }
+    .other {
+      background-color: #593e69;
+      align-self: flex-start;
+      margin-right: auto;
+      font-family: Lemon; 
+      color: #8ec520
+    }
+    form {
+      display: flex;
+      padding: 10px;
+      background-color: gray;
+      border-top: 1px solid #ccc;
+    }
+    input[type="text"] {
+      flex: 1;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      margin-right: 10px;
+    }
+    button {
+      padding: 10px 20px;
+      border: none;
+      background-color: black;
+      color: white;
+      border-radius: 8px;
+      cursor: pointer;
+      font-family: Sigmar One; 
+    }
+    button:hover {
+      background-color: cornsilk;
+      transition-duration: 0.7s;
+
+
+    }
+  </style>
+</head>
+<body>
+  <div class="chat-container">
+    <div class="sidebar">
+      <h3>{{ username }}</h3>
+      <a href="{{ url_for('chat_window', username=username) }}" style="color:white;,text-decoration:none">⬅ Back to Contacts</a>
+    </div>
+
+    <div class="chat-area">
+      <div class="chat-header">Chat with {{ contact }}</div>
+      <div id="messages"></div>
+      <form id="chat-form">
+        <input type="text" id="messageInput" placeholder="Type a message..." required>
+        <button type="submit">Send</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyCgY0qvuCml114ujVhzUyfz2eZ4L0k4LKo",
+      authDomain: "blitzchat-30890.firebaseapp.com",
+      databaseURL: "https://blitzchat-30890-default-rtdb.europe-west1.firebasedatabase.app",
+      projectId: "blitzchat-30890",
+      storageBucket: "blitzchat-30890.appspot.com"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    const username = "{{ username }}";
+    const contact = "{{ contact }}";
+    const chatId = [username, contact].sort().join("_");
+    const messagesRef = db.ref("messages/" + chatId);
+    const messagesDiv = document.getElementById("messages");
+    const form = document.getElementById("chat-form");
+    const input = document.getElementById("messageInput");
+
+    // Show existing + new messages
+    messagesRef.on("child_added", (snapshot) => {
+      const msg = snapshot.val();
+      const p = document.createElement("div");
+      p.className = "message " + (msg.sender === username ? "me" : "other");
+      p.innerHTML = `<strong>${msg.sender}:</strong> ${msg.text}`;
+      messagesDiv.appendChild(p);
+      messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    });
+
+    // Send new message
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const message = input.value.trim();
+      if (message) {
+        messagesRef.push({
+          sender: username,
+          text: message,
+          timestamp: Date.now()
+        });
+        input.value = "";
+      }
+    });
+  </script>
+</body>
+</html>

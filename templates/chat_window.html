@@ -12,9 +12,35 @@
     <input type="text" id="searchUser" placeholder="Search username">
     <button onclick="searchAndSendInvite()">Send Invite</button>
 
+    <!-- List of received invites -->
+    <h3>Pending Invites:</h3>
+    <ul>
+      {% for sender in invites_received %}
+        <li>
+          {{ sender }}
+          <form method="POST" action="/accept_invite" style="display:inline;">
+              <input type="hidden" name="user" value="{{ username }}">
+              <input type="hidden" name="sender" value="{{ sender }}">
+              <button type="submit">Accept</button>
+          </form>
+        </li>
+      {% endfor %}
+    </ul>
+
     <!-- List of added contacts -->
     <h3>Contacts:</h3>
-    <ul id="contactList"></ul>
+    <ul>
+      {% for contact_username, full_name in contacts.items() %}
+        <li>
+          {{ full_name }} (@{{ contact_username }})
+            <form method="get" action="{{ url_for('chat', username=username, contact=contact_username) }}">
+              <button type="submit">{{ name }}</button>
+            </form>
+        </li>
+      {% else %}
+        <li>No contacts yet.</li>
+      {% endfor %}
+    </ul>
 
     <!-- Chat Area -->
     <div id="chatSection" style="display:none;">
@@ -23,22 +49,186 @@
         <input type="text" id="messageInput" placeholder="Type a message">
         <button onclick="sendMessage()">Send</button>
     </div>
-
     <script>
-        const currentUser = "{{ username }}";
+
+        function startChatWith(username) {
+            document.getElementById('chatSection').style.display = 'block';
+            document.getElementById('chatWith').innerText = username;
+            // Here, you can later load chat messages between current user and username
+          }
+        
 
         // TODO: Add Firebase config here
+        // Import the functions you need from the SDKs you need
+        
+        
+        // TODO: Add SDKs for Firebase products that you want to use
+        // https://firebase.google.com/docs/web/setup#available-libraries
+
+        // Your web app's Firebase configuration
+        // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+        var firebaseConfig = {
+          
+          
+          apiKey: "AIzaSyCgY0qvuCml114ujVhzUyfz2eZ4L0k4LKo",//llcbm
+          authDomain: "blitzchat-30890.firebaseapp.com",
+          projectId: "blitzchat-30890",
+          storageBucket: "blitzchat-30890.firebasestorage.com",//at the end .app changed to.com
+          messagingSenderId: "256345196234",
+          appId: "1:256345196234:web:f80c48f616f8d30f3f9633",
+          measurementId: "G-CNK3CLKQ60"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+
+        const db=firebase.database();
+
+        const currentUser = "{{ username }}";
+        console.log("Logged in as:", currentUser);
+
 
         // Placeholder: You'll implement these
         function searchAndSendInvite() {
-            const toUser = document.getElementById("searchUser").value;
-            alert("You sent an invite to " + toUser);
-        }
+              const recipient = document.getElementById('searchUser').value;
+              if (!recipient) return alert("Enter a username to invite.");
+
+              fetch('/send_invite', {
+                  method: 'POST',
+                  headers: {
+                      'Content-Type': 'application/x-www-form-urlencoded'
+                  },
+                  body: `sender=${currentUser}&recipient=${recipient}`
+              })
+              .then(res => {
+                  if (res.ok) {
+                      alert("Invite sent!");
+                      location.reload();  // reload to see new invites
+                  } else {
+                      res.text().then(msg => alert(msg));
+                  }
+              });
+          }
 
         function sendMessage() {
-            const message = document.getElementById("messageInput").value;
-            alert("Sent: " + message);
+            const input = document.getElementById("messageInput");
+            const message=input.value.trim();
+            if (!message || !currentChatUser|| !chatRef) return;
+            //const chatId = getChatId(currentUser, currentChatUser);
+            const timestamp = Date.now();
+            chatRef.push({
+                sender: currentUser,
+                text: message,
+                timestamp: timestamp
+            });
+
+            input.value = "";  // Clear input
+            
+
         }
     </script>
+
+    <script>
+        function loadContacts(){
+            const contactList=document.getElementById("contactList");
+            contactList.innerHTML=""
+            console.log("Loading contacts for:", currentUser);
+
+            db.ref(`users/${currentUser}/contacts`).on('value',snapshot=>{
+                
+                contactList.innerHTML=""
+                if (!snapshot.exists()) {
+                    const li = document.createElement("li");
+                    li.textContent = "No contacts yet (Firebase)";
+                    contactList.appendChild(li);
+                    return;
+                }
+                snapshot.forEach(child=>{
+                    const user=child.key;
+                    
+                    const li=document.createElement("li");
+                    li.textContent = user;
+                    li.onclick = () => openChatWith(user);
+                    contactList.appendChild(li);
+                    
+                });
+            });
+        }
+
+        function listenForInvites()
+        {
+            db.ref(`users/${currentUser}/invites_received`).on("child_added",snapshot=>{
+                const fromUser = snapshot.key;
+                const accept = confirm(`${fromUser} sent you a chat invite. Accept?`);
+                if (accept){
+
+                    
+                    db.ref(`users/${currentUser}/contacts/${fromUser}`).set(true);
+                    db.ref(`users/${fromUser}/contacts/${currentUser}`).set(true);
+
+                    // Remove invite entries
+                    db.ref(`users/${currentUser}/invites_received/${fromUser}`).remove();
+                    db.ref(`users/${fromUser}/invites_sent/${currentUser}`).remove();
+                }
+            });
+        }
+        function openChat(user) {
+            document.getElementById("chatWith").textContent = user;
+            document.getElementById("chatSection").style.display = "block";
+            loadChat(user);
+        }
+
+        let currentChatUser = null;
+        let chatRef = null;
+        function getChatId(user1,user2){
+            return [user1, user2].sort().join("_");
+            
+        }
+        
+        function loadChat(user)
+        {
+            currentChatUser=user;
+            const chatId=getChatId(currentUser,user);
+            chatRef = db.ref(`chats/${chatId}/messages`);
+
+            const chatBox = document.getElementById("chatBox");
+            chatBox.innerHTML = "";
+            // Listen for new messages
+            chatRef.off();  // Clear old listeners
+            chatRef.on("child_added", (snapshot) => {
+                const msg = snapshot.val();
+                const msgDiv = document.createElement("div");
+                msgDiv.textContent = `${msg.sender}: ${msg.text}`;
+                chatBox.appendChild(msgDiv);
+                chatBox.scrollTop = chatBox.scrollHeight;  // Auto scroll
+            });
+        }
+        window.onload=function(){
+            loadContacts();
+            listenForInvites();
+        };
+
+        /*function sendInvite() {
+            const recipient = document.getElementById('searchUser').value;
+            if (!recipient) return alert("Enter a username to invite.");
+
+            fetch('/send_invite', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: `sender=${currentUser}&recipient=${recipient}`
+            })
+            .then(res => {
+                if (res.ok) {
+                    alert("Invite sent!");
+                    window.location.reload();
+                } else {
+                    alert("User not found or error occurred.");
+                }
+            });
+        }*/
+    </script>
+
 </body>
 </html>

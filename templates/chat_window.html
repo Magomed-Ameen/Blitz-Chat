@@ -4,6 +4,105 @@
     <title>Messenger</title>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        .contacts-container {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        .contact-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+            transition: background-color 0.2s;
+        }
+        
+        .contact-item:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .contact-item:last-child {
+            border-bottom: none;
+        }
+        
+        .contact-info {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .contact-info strong {
+            font-size: 16px;
+            color: #333;
+            margin-bottom: 4px;
+        }
+        
+        .username {
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .chat-btn {
+            background-color: #4a90e2;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.2s;
+        }
+        
+        .chat-btn:hover {
+            background-color: #357ab8;
+        }
+        
+        .no-contacts {
+            text-align: center;
+            padding: 40px 20px;
+            color: #666;
+        }
+        
+        .no-contacts p {
+            margin: 0;
+            font-style: italic;
+        }
+        
+        h2, h3 {
+            color: #333;
+        }
+        
+        input[type="text"] {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        button {
+            padding: 8px 16px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        button:hover {
+            background-color: #218838;
+        }
+    </style>
 </head>
 <body>
     <h2>Welcome, {{ username }}!</h2>
@@ -29,18 +128,23 @@
 
     <!-- List of added contacts -->
     <h3>Contacts:</h3>
-    <ul>
+    <div class="contacts-container">
       {% for contact_username, full_name in contacts.items() %}
-        <li>
-          {{ full_name }} ({{ contact_username }})
-            <form method="get" action="{{ url_for('chat', username=username, contact=contact_username) }}">
-              <button type="submit">{{ name }}</button>
-            </form>
-        </li>
+        <div class="contact-item">
+          <div class="contact-info">
+            <strong>{{ full_name }}</strong>
+            <span class="username">@{{ contact_username }}</span>
+          </div>
+          <form method="get" action="{{ url_for('chat', username=username, contact=contact_username) }}" style="margin: 0;">
+            <button type="submit" class="chat-btn">Chat</button>
+          </form>
+        </div>
       {% else %}
-        <li>No contacts yet.</li>
+        <div class="no-contacts">
+          <p>No contacts yet. Send invites to start chatting!</p>
+        </div>
       {% endfor %}
-    </ul>
+    </div></ul>
 
     <!-- Chat Area -->
     <div id="chatSection" style="display:none;">

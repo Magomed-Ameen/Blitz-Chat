@@ -32,7 +32,7 @@
     <ul>
       {% for contact_username, full_name in contacts.items() %}
         <li>
-          {{ full_name }} (@{{ contact_username }})
+          {{ full_name }} ({{ contact_username }})
             <form method="get" action="{{ url_for('chat', username=username, contact=contact_username) }}">
               <button type="submit">{{ name }}</button>
             </form>

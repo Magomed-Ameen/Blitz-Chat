@@ -1,323 +1,382 @@
+
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Messenger</title>
+    <title>BlitzChat - Messenger</title>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            background-color: #f5f5f5;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
         }
-        
-        .contacts-container {
+
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 25px 30px;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .header img {
+            height: 60px;
+            margin-right: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .header h2 {
+            font-size: 28px;
+            font-weight: 600;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .section {
             background: white;
-            border-radius: 8px;
-            padding: 15px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(0, 0, 0, 0.05);
         }
-        
+
+        .section h3 {
+            color: #2a5298;
+            font-size: 20px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e8f0fe;
+            display: flex;
+            align-items: center;
+        }
+
+        .section h3::before {
+            content: '';
+            width: 4px;
+            height: 20px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            margin-right: 12px;
+            border-radius: 2px;
+        }
+
+        .search-container {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+            align-items: center;
+        }
+
+        input[type="text"] {
+            flex: 1;
+            padding: 15px 20px;
+            border: 2px solid #e1e8ed;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .btn {
+            padding: 15px 25px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #56ab2f, #a8e6cf);
+            color: white;
+            box-shadow: 0 4px 15px rgba(86, 171, 47, 0.4);
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(86, 171, 47, 0.6);
+        }
+
+        .btn-chat {
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            color: white;
+            padding: 12px 20px;
+            font-size: 14px;
+            box-shadow: 0 3px 10px rgba(79, 172, 254, 0.4);
+        }
+
+        .btn-chat:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 5px 15px rgba(79, 172, 254, 0.6);
+        }
+
+        .contacts-grid {
+            display: grid;
+            gap: 20px;
+        }
+
         .contact-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 12px;
-            border-bottom: 1px solid #eee;
-            transition: background-color 0.2s;
+            padding: 20px;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-radius: 15px;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(0, 0, 0, 0.05);
         }
-        
+
         .contact-item:hover {
-            background-color: #f8f9fa;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            background: linear-gradient(135deg, #ffffff, #f8f9fa);
         }
-        
-        .contact-item:last-child {
-            border-bottom: none;
-        }
-        
+
         .contact-info {
             display: flex;
             flex-direction: column;
+            gap: 5px;
         }
-        
+
         .contact-info strong {
-            font-size: 16px;
-            color: #333;
-            margin-bottom: 4px;
+            font-size: 18px;
+            color: #2c3e50;
+            font-weight: 600;
         }
-        
-        .username {
+
+        .contact-info .username {
             font-size: 14px;
-            color: #666;
-        }
-        
-        .chat-btn {
-            background-color: #4a90e2;
-            color: white;
-            border: none;
-            padding: 8px 16px;
+            color: #6c757d;
+            background: rgba(102, 126, 234, 0.1);
+            padding: 4px 8px;
             border-radius: 6px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: background-color 0.2s;
+            display: inline-block;
         }
-        
-        .chat-btn:hover {
-            background-color: #357ab8;
+
+        .invites-list {
+            list-style: none;
         }
-        
-        .no-contacts {
+
+        .invite-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background: linear-gradient(135deg, #fff3cd, #ffeaa7);
+            border-radius: 12px;
+            margin-bottom: 15px;
+            border-left: 4px solid #f39c12;
+            transition: all 0.3s ease;
+        }
+
+        .invite-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(243, 156, 18, 0.3);
+        }
+
+        .invite-sender {
+            font-weight: 600;
+            color: #e67e22;
+            font-size: 16px;
+        }
+
+        .no-contacts, .no-invites {
             text-align: center;
             padding: 40px 20px;
-            color: #666;
+            color: #6c757d;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-radius: 12px;
+            border: 2px dashed #dee2e6;
         }
-        
-        .no-contacts p {
-            margin: 0;
+
+        .no-contacts p, .no-invites p {
+            font-size: 16px;
             font-style: italic;
         }
-        
-        h2, h3 {
-            color: #333;
-        }
-        
-        input[type="text"] {
-            padding: 8px 12px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 14px;
-        }
-        
-        button {
-            padding: 8px 16px;
-            background-color: #28a745;
+
+        .badge {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
             color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 14px;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-left: 10px;
         }
-        
-        button:hover {
-            background-color: #218838;
+
+        @media (max-width: 768px) {
+            .main-container {
+                margin: 10px;
+                border-radius: 15px;
+            }
+            
+            .header {
+                padding: 20px;
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .header img {
+                margin-right: 0;
+                margin-bottom: 15px;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+            
+            .search-container {
+                flex-direction: column;
+            }
+            
+            .contact-item {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
         }
     </style>
 </head>
 <body>
-    <div style="display: flex; align-items: center; margin-bottom: 20px;">
-        <img src="{{ url_for('static', filename='BlitzChatLogo.png') }}" alt="BlitzChat Logo" style="height: 50px; margin-right: 15px;">
-        <h2 style="margin: 0;">Welcome, {{ username }}!</h2>
+    <div class="main-container">
+        <div class="header">
+            <img src="{{ url_for('static', filename='BlitzChatLogo.png') }}" alt="BlitzChat Logo">
+            <h2>Welcome, {{ username }}!</h2>
+        </div>
+
+        <div class="content">
+            <!-- Search for users -->
+            <div class="section">
+                <h3>Add New Contact</h3>
+                <div class="search-container">
+                    <input type="text" id="searchUser" placeholder="Enter username to send invite...">
+                    <button class="btn btn-primary" onclick="searchAndSendInvite()">Send Invite</button>
+                </div>
+            </div>
+
+            <!-- List of received invites -->
+            <div class="section">
+                <h3>Pending Invites
+                    {% if invites_received %}
+                        <span class="badge">{{ invites_received|length }}</span>
+                    {% endif %}
+                </h3>
+                {% if invites_received %}
+                    <ul class="invites-list">
+                        {% for sender in invites_received %}
+                            <li class="invite-item">
+                                <span class="invite-sender">{{ sender }}</span>
+                                <form method="POST" action="/accept_invite" style="margin: 0;">
+                                    <input type="hidden" name="user" value="{{ username }}">
+                                    <input type="hidden" name="sender" value="{{ sender }}">
+                                    <button type="submit" class="btn btn-success">Accept</button>
+                                </form>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <div class="no-invites">
+                        <p>No pending invites</p>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- List of contacts -->
+            <div class="section">
+                <h3>Your Contacts
+                    {% if contacts %}
+                        <span class="badge">{{ contacts|length }}</span>
+                    {% endif %}
+                </h3>
+                <div class="contacts-grid">
+                    {% for contact_username, full_name in contacts.items() %}
+                        <div class="contact-item">
+                            <div class="contact-info">
+                                <strong>{{ full_name }}</strong>
+                                <span class="username">@{{ contact_username }}</span>
+                            </div>
+                            <form method="get" action="{{ url_for('chat', username=username, contact=contact_username) }}" style="margin: 0;">
+                                <button type="submit" class="btn btn-chat">Start Chat</button>
+                            </form>
+                        </div>
+                    {% else %}
+                        <div class="no-contacts">
+                            <p>No contacts yet. Send invites to start chatting!</p>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
     </div>
 
-    <!-- Search for users -->
-    <input type="text" id="searchUser" placeholder="Search username">
-    <button onclick="searchAndSendInvite()">Send Invite</button>
-
-    <!-- List of received invites -->
-    <h3>Pending Invites:</h3>
-    <ul>
-      {% for sender in invites_received %}
-        <li>
-          {{ sender }}
-          <form method="POST" action="/accept_invite" style="display:inline;">
-              <input type="hidden" name="user" value="{{ username }}">
-              <input type="hidden" name="sender" value="{{ sender }}">
-              <button type="submit">Accept</button>
-          </form>
-        </li>
-      {% endfor %}
-    </ul>
-
-    <!-- List of added contacts -->
-    <h3>Contacts:</h3>
-    <div class="contacts-container">
-      {% for contact_username, full_name in contacts.items() %}
-        <div class="contact-item">
-          <div class="contact-info">
-            <strong>{{ full_name }}</strong>
-            <span class="username">{{ contact_username }}</span>
-          </div>
-          <form method="get" action="{{ url_for('chat', username=username, contact=contact_username) }}" style="margin: 0;">
-            <button type="submit" class="chat-btn">Chat</button>
-          </form>
-        </div>
-      {% else %}
-        <div class="no-contacts">
-          <p>No contacts yet. Send invites to start chatting!</p>
-        </div>
-      {% endfor %}
-    </div></ul>
-
-    <!-- Chat Area -->
-    <div id="chatSection" style="display:none;">
-        <h3>Chat with <span id="chatWith"></span></h3>
-        <div id="chatBox" style="border:1px solid black; height:200px; overflow-y:scroll;"></div>
-        <input type="text" id="messageInput" placeholder="Type a message">
-        <button onclick="sendMessage()">Send</button>
-    </div>
     <script>
-
-        function startChatWith(username) {
-            document.getElementById('chatSection').style.display = 'block';
-            document.getElementById('chatWith').innerText = username;
-            // Here, you can later load chat messages between current user and username
-          }
-        
-
         // TODO: Add Firebase config here
-        // Import the functions you need from the SDKs you need
-        
-        
-        // TODO: Add SDKs for Firebase products that you want to use
-        // https://firebase.google.com/docs/web/setup#available-libraries
-
-        // Your web app's Firebase configuration
-        // For Firebase JS SDK v7.20.0 and later, measurementId is optional
         var firebaseConfig = {
-          
-          
-          apiKey: "AIzaSyCgY0qvuCml114ujVhzUyfz2eZ4L0k4LKo",//llcbm
-          authDomain: "blitzchat-30890.firebaseapp.com",
-          projectId: "blitzchat-30890",
-          storageBucket: "blitzchat-30890.firebasestorage.com",//at the end .app changed to.com
-          messagingSenderId: "256345196234",
-          appId: "1:256345196234:web:f80c48f616f8d30f3f9633",
-          measurementId: "G-CNK3CLKQ60"
+            apiKey: "AIzaSyCgY0qvuCml114ujVhzUyfz2eZ4L0k4LKo",
+            authDomain: "blitzchat-30890.firebaseapp.com",
+            projectId: "blitzchat-30890",
+            storageBucket: "blitzchat-30890.firebasestorage.com",
+            messagingSenderId: "256345196234",
+            appId: "1:256345196234:web:f80c48f616f8d30f3f9633",
+            measurementId: "G-CNK3CLKQ60"
         };
 
         // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
-
-        const db=firebase.database();
-
+        const db = firebase.database();
         const currentUser = "{{ username }}";
-        console.log("Logged in as:", currentUser);
 
-
-        // Placeholder: You'll implement these
         function searchAndSendInvite() {
-              const recipient = document.getElementById('searchUser').value;
-              if (!recipient) return alert("Enter a username to invite.");
-
-              fetch('/send_invite', {
-                  method: 'POST',
-                  headers: {
-                      'Content-Type': 'application/x-www-form-urlencoded'
-                  },
-                  body: `sender=${currentUser}&recipient=${recipient}`
-              })
-              .then(res => {
-                  if (res.ok) {
-                      alert("Invite sent!");
-                      location.reload();  // reload to see new invites
-                  } else {
-                      res.text().then(msg => alert(msg));
-                  }
-              });
-          }
-
-        function sendMessage() {
-            const input = document.getElementById("messageInput");
-            const message=input.value.trim();
-            if (!message || !currentChatUser|| !chatRef) return;
-            //const chatId = getChatId(currentUser, currentChatUser);
-            const timestamp = Date.now();
-            chatRef.push({
-                sender: currentUser,
-                text: message,
-                timestamp: timestamp
-            });
-
-            input.value = "";  // Clear input
-            
-
-        }
-    </script>
-
-    <script>
-        function loadContacts(){
-            const contactList=document.getElementById("contactList");
-            contactList.innerHTML=""
-            console.log("Loading contacts for:", currentUser);
-
-            db.ref(`users/${currentUser}/contacts`).on('value',snapshot=>{
-                
-                contactList.innerHTML=""
-                if (!snapshot.exists()) {
-                    const li = document.createElement("li");
-                    li.textContent = "No contacts yet (Firebase)";
-                    contactList.appendChild(li);
-                    return;
-                }
-                snapshot.forEach(child=>{
-                    const user=child.key;
-                    
-                    const li=document.createElement("li");
-                    li.textContent = user;
-                    li.onclick = () => openChatWith(user);
-                    contactList.appendChild(li);
-                    
-                });
-            });
-        }
-
-        function listenForInvites()
-        {
-            db.ref(`users/${currentUser}/invites_received`).on("child_added",snapshot=>{
-                const fromUser = snapshot.key;
-                const accept = confirm(`${fromUser} sent you a chat invite. Accept?`);
-                if (accept){
-
-                    
-                    db.ref(`users/${currentUser}/contacts/${fromUser}`).set(true);
-                    db.ref(`users/${fromUser}/contacts/${currentUser}`).set(true);
-
-                    // Remove invite entries
-                    db.ref(`users/${currentUser}/invites_received/${fromUser}`).remove();
-                    db.ref(`users/${fromUser}/invites_sent/${currentUser}`).remove();
-                }
-            });
-        }
-        function openChat(user) {
-            document.getElementById("chatWith").textContent = user;
-            document.getElementById("chatSection").style.display = "block";
-            loadChat(user);
-        }
-
-        let currentChatUser = null;
-        let chatRef = null;
-        function getChatId(user1,user2){
-            return [user1, user2].sort().join("_");
-            
-        }
-        
-        function loadChat(user)
-        {
-            currentChatUser=user;
-            const chatId=getChatId(currentUser,user);
-            chatRef = db.ref(`chats/${chatId}/messages`);
-
-            const chatBox = document.getElementById("chatBox");
-            chatBox.innerHTML = "";
-            // Listen for new messages
-            chatRef.off();  // Clear old listeners
-            chatRef.on("child_added", (snapshot) => {
-                const msg = snapshot.val();
-                const msgDiv = document.createElement("div");
-                msgDiv.textContent = `${msg.sender}: ${msg.text}`;
-                chatBox.appendChild(msgDiv);
-                chatBox.scrollTop = chatBox.scrollHeight;  // Auto scroll
-            });
-        }
-        window.onload=function(){
-            loadContacts();
-            listenForInvites();
-        };
-
-        /*function sendInvite() {
-            const recipient = document.getElementById('searchUser').value;
-            if (!recipient) return alert("Enter a username to invite.");
+            const recipient = document.getElementById('searchUser').value.trim();
+            if (!recipient) {
+                alert("Please enter a username to invite.");
+                return;
+            }
 
             fetch('/send_invite', {
                 method: 'POST',
@@ -328,14 +387,25 @@
             })
             .then(res => {
                 if (res.ok) {
-                    alert("Invite sent!");
-                    window.location.reload();
+                    alert("Invite sent successfully!");
+                    document.getElementById('searchUser').value = '';
+                    location.reload();
                 } else {
-                    alert("User not found or error occurred.");
+                    res.text().then(msg => alert(msg));
                 }
+            })
+            .catch(err => {
+                console.error('Error sending invite:', err);
+                alert('Error sending invite. Please try again.');
             });
-        }*/
-    </script>
+        }
 
+        // Allow Enter key to send invite
+        document.getElementById('searchUser').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                searchAndSendInvite();
+            }
+        });
+    </script>
 </body>
 </html>

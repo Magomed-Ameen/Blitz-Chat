@@ -133,7 +133,7 @@
         <div class="contact-item">
           <div class="contact-info">
             <strong>{{ full_name }}</strong>
-            <span class="username">@{{ contact_username }}</span>
+            <span class="username">{{ contact_username }}</span>
           </div>
           <form method="get" action="{{ url_for('chat', username=username, contact=contact_username) }}" style="margin: 0;">
             <button type="submit" class="chat-btn">Chat</button>

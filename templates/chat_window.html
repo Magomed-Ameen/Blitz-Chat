@@ -1,260 +1,315 @@
+
 <!DOCTYPE html>
 <html>
 <head>
     <title>BlitzChat - Messenger</title>
+    <!-- Firebase JavaScript SDKs for real-time database functionality -->
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
     <style>
+        /* Reset all browser default margins, padding, and set consistent box-sizing */
         * {
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
+            box-sizing: border-box; /* Makes padding/border included in width/height calculations */
         }
 
+        /* Main body styling - sets font family, background color, text color, and line spacing */
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #f8f9fa;
-            color: #2c3e50;
-            line-height: 1.4;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Modern, clean font stack */
+            background: #f8f9fa; /* Light gray background for the entire page */
+            color: #2c3e50; /* Dark blue-gray text color */
+            line-height: 1.4; /* Spacing between lines of text */
         }
 
+        /* Top header bar that contains logo and username */
         .header {
-            background: white;
-            border-bottom: 1px solid #e9ecef;
-            padding: 12px 20px;
-            display: flex;
-            align-items: center;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            background: white; /* White background for header */
+            border-bottom: 1px solid #e9ecef; /* Subtle bottom border */
+            padding: 12px 20px; /* 12px top/bottom, 20px left/right padding */
+            display: flex; /* Horizontal layout for logo and text */
+            align-items: center; /* Vertically center items in header */
+            position: sticky; /* Header stays at top when scrolling */
+            top: 0; /* Stick to very top of viewport */
+            z-index: 100; /* Ensure header appears above other content */
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05); /* Subtle shadow below header */
         }
 
+        /* Logo image in header */
         .header img {
-            height: 28px;
-            margin-right: 10px;
+            height: 28px; /* Fixed height for logo */
+            margin-right: 10px; /* Space between logo and username */
         }
 
+        /* Username text in header */
         .header h2 {
-            font-size: 18px;
-            font-weight: 500;
-            color: #495057;
+            font-size: 18px; /* Text size for username */
+            font-weight: 500; /* Medium font weight (not too bold) */
+            color: #495057; /* Medium gray color */
         }
 
+        /* Main content container - centers content and limits width */
         .container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
+            max-width: 800px; /* Maximum width of content area */
+            margin: 0 auto; /* Center the container horizontally */
+            padding: 20px; /* 20px padding on all sides */
         }
 
+        /* Each section box (Add Contact, Pending Invites, Contacts) */
         .section {
-            background: white;
-            border: 1px solid #e9ecef;
-            border-radius: 6px;
-            margin-bottom: 16px;
-            overflow: hidden;
+            background: white; /* White background for each section */
+            border: 1px solid #e9ecef; /* Light gray border around section */
+            border-radius: 6px; /* Rounded corners */
+            margin-bottom: 16px; /* Space between sections */
+            overflow: hidden; /* Prevents content from overflowing rounded corners */
         }
 
+        /* Header area of each section (contains title and badge) */
         .section-header {
-            background: #f8f9fa;
-            padding: 8px 16px;
-            border-bottom: 1px solid #e9ecef;
-            font-size: 14px;
-            font-weight: 600;
-            color: #6c757d;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            background: #f8f9fa; /* Light gray background for section headers */
+            padding: 8px 16px; /* 8px top/bottom, 16px left/right */
+            border-bottom: 1px solid #e9ecef; /* Border separating header from content */
+            font-size: 14px; /* Text size for section titles */
+            font-weight: 600; /* Bold font weight */
+            color: #6c757d; /* Medium gray text color */
+            display: flex; /* Horizontal layout */
+            justify-content: space-between; /* Title on left, badge on right */
+            align-items: center; /* Vertically center items */
         }
 
+        /* Small red notification badge (shows number of invites/contacts) */
         .badge {
-            background: #dc3545;
-            color: white;
-            font-size: 11px;
-            padding: 2px 6px;
-            border-radius: 10px;
-            font-weight: 500;
+            background: #dc3545; /* Red background */
+            color: white; /* White text */
+            font-size: 11px; /* Small text size */
+            padding: 2px 6px; /* Small padding around text */
+            border-radius: 10px; /* Very rounded corners (pill shape) */
+            font-weight: 500; /* Medium font weight */
         }
 
+        /* Content area inside each section */
         .section-content {
-            padding: 12px 16px;
+            padding: 12px 16px; /* 12px top/bottom, 16px left/right */
         }
 
+        /* Row containing search input and button */
         .search-row {
-            display: flex;
-            gap: 8px;
-            align-items: center;
+            display: flex; /* Horizontal layout */
+            gap: 8px; /* 8px space between input and button */
+            align-items: center; /* Vertically align input and button */
         }
 
+        /* Text input fields (username search box) */
         input[type="text"] {
-            flex: 1;
-            padding: 8px 12px;
-            border: 1px solid #ced4da;
-            border-radius: 4px;
-            font-size: 13px;
-            background: #fff;
+            flex: 1; /* Takes up remaining space in flex container */
+            padding: 8px 12px; /* 8px top/bottom, 12px left/right padding */
+            border: 1px solid #ced4da; /* Gray border */
+            border-radius: 4px; /* Slightly rounded corners */
+            font-size: 13px; /* Text size inside input */
+            background: #fff; /* White background */
         }
 
+        /* Input field when user clicks on it (focused state) */
         input[type="text"]:focus {
-            outline: none;
-            border-color: #007bff;
-            box-shadow: 0 0 0 2px rgba(0,123,255,0.1);
+            outline: none; /* Remove default browser focus outline */
+            border-color: #007bff; /* Blue border when focused */
+            box-shadow: 0 0 0 2px rgba(0,123,255,0.1); /* Blue glow around input */
         }
 
+        /* Base button styling */
         .btn {
-            padding: 8px 16px;
-            border: none;
-            border-radius: 4px;
-            font-size: 13px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s;
-            text-decoration: none;
-            display: inline-block;
+            padding: 8px 16px; /* 8px top/bottom, 16px left/right */
+            border: none; /* Remove default button border */
+            border-radius: 4px; /* Rounded corners */
+            font-size: 13px; /* Button text size */
+            font-weight: 500; /* Medium font weight */
+            cursor: pointer; /* Show hand cursor on hover */
+            transition: all 0.2s; /* Smooth color transitions */
+            text-decoration: none; /* Remove underlines if used as link */
+            display: inline-block; /* Allow padding/margins */
         }
 
+        /* Blue primary button (Send Invite button) */
         .btn-primary {
-            background: #007bff;
-            color: white;
+            background: #007bff; /* Blue background */
+            color: white; /* White text */
         }
 
+        /* Blue button when user hovers over it */
         .btn-primary:hover {
-            background: #0056b3;
+            background: #0056b3; /* Darker blue on hover */
         }
 
+        /* Green success button (Accept invite button) */
         .btn-success {
-            background: #28a745;
-            color: white;
-            padding: 6px 12px;
-            font-size: 12px;
+            background: #28a745; /* Green background */
+            color: white; /* White text */
+            padding: 6px 12px; /* Smaller padding than primary buttons */
+            font-size: 12px; /* Smaller text size */
         }
 
+        /* Green button when user hovers over it */
         .btn-success:hover {
-            background: #1e7e34;
+            background: #1e7e34; /* Darker green on hover */
         }
 
+        /* Teal chat button (used for starting chats) */
         .btn-chat {
-            background: #17a2b8;
-            color: white;
-            padding: 6px 12px;
-            font-size: 12px;
+            background: #17a2b8; /* Teal background */
+            color: white; /* White text */
+            padding: 6px 12px; /* Smaller padding */
+            font-size: 12px; /* Smaller text size */
         }
 
+        /* Teal button when user hovers over it */
         .btn-chat:hover {
-            background: #117a8b;
+            background: #117a8b; /* Darker teal on hover */
         }
 
+        /* Each row in the pending invites list */
         .invite-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 8px 0;
-            border-bottom: 1px solid #f1f3f4;
+            display: flex; /* Horizontal layout */
+            justify-content: space-between; /* Username on left, accept button on right */
+            align-items: center; /* Vertically center items */
+            padding: 8px 0; /* 8px top/bottom padding, no left/right */
+            border-bottom: 1px solid #f1f3f4; /* Light border between items */
         }
 
+        /* Remove border from last invite item */
         .invite-item:last-child {
             border-bottom: none;
         }
 
+        /* Username text in invite list */
         .invite-sender {
-            font-weight: 500;
-            color: #495057;
-            font-size: 14px;
+            font-weight: 500; /* Medium font weight */
+            color: #495057; /* Medium gray color */
+            font-size: 14px; /* Text size */
         }
 
+        /* Each row in the contacts list */
         .contact-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 0;
-            border-bottom: 1px solid #f1f3f4;
+            display: flex; /* Horizontal layout */
+            justify-content: space-between; /* Contact info on left, chat button on right */
+            align-items: center; /* Vertically center items */
+            padding: 10px 0; /* 10px top/bottom padding */
+            border-bottom: 1px solid #f1f3f4; /* Light border between contacts */
         }
 
+        /* Remove border from last contact */
         .contact-item:last-child {
             border-bottom: none;
         }
 
+        /* Container for contact name and username */
         .contact-info {
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
+            display: flex; /* Vertical layout */
+            flex-direction: column; /* Stack name above username */
+            gap: 2px; /* 2px space between name and username */
         }
 
+        /* Contact's display name */
         .contact-name {
-            font-weight: 500;
-            color: #495057;
-            font-size: 14px;
+            font-weight: 500; /* Medium font weight */
+            color: #495057; /* Medium gray color */
+            font-size: 14px; /* Text size */
         }
 
+        /* Contact's username (with @ symbol) */
         .contact-username {
-            font-size: 12px;
-            color: #6c757d;
+            font-size: 12px; /* Smaller text size */
+            color: #6c757d; /* Lighter gray color */
         }
 
+        /* Message shown when lists are empty */
         .empty-state {
-            text-align: center;
-            color: #6c757d;
-            font-size: 13px;
-            padding: 20px;
-            font-style: italic;
+            text-align: center; /* Center the text */
+            color: #6c757d; /* Light gray color */
+            font-size: 13px; /* Text size */
+            padding: 20px; /* Padding around the message */
+            font-style: italic; /* Italic text style */
         }
 
+        /* Responsive design for mobile devices */
         @media (max-width: 768px) {
+            /* Reduce container padding on mobile */
             .container {
-                padding: 10px;
+                padding: 10px; /* Less padding on mobile */
             }
 
+            /* Reduce header padding on mobile */
             .header {
-                padding: 10px 15px;
+                padding: 10px 15px; /* Less padding on mobile */
             }
 
+            /* Stack search input and button vertically on mobile */
             .search-row {
-                flex-direction: column;
-                align-items: stretch;
+                flex-direction: column; /* Vertical layout */
+                align-items: stretch; /* Make button full width */
             }
 
+            /* Stack contact info and chat button vertically on mobile */
             .contact-item {
-                flex-direction: column;
-                gap: 8px;
-                align-items: flex-start;
+                flex-direction: column; /* Vertical layout */
+                gap: 8px; /* Space between contact info and button */
+                align-items: flex-start; /* Align items to left */
             }
         }
     </style>
 </head>
 <body>
+    <!-- Top header bar with logo and username -->
     <div class="header">
+        <!-- BlitzChat logo image -->
         <img src="{{ url_for('static', filename='BlitzChatLogo.png') }}" alt="BlitzChat Logo">
+        <!-- Current user's username -->
         <h2>{{ username }}</h2>
     </div>
 
+    <!-- Main content container -->
     <div class="container">
-        <!-- Add Contact Section -->
+        <!-- Section for adding new contacts -->
         <div class="section">
+            <!-- Section header with title -->
             <div class="section-header">
                 Add Contact
             </div>
+            <!-- Section content with search form -->
             <div class="section-content">
+                <!-- Row containing input field and button -->
                 <div class="search-row">
+                    <!-- Input field for entering username to invite -->
                     <input type="text" id="searchUser" placeholder="Username">
+                    <!-- Button to send invite to entered username -->
                     <button class="btn btn-primary" onclick="searchAndSendInvite()">Send Invite</button>
                 </div>
             </div>
         </div>
 
-        <!-- Pending Invites -->
+        <!-- Section for pending friend invites (only shown if there are invites) -->
         {% if invites_received %}
         <div class="section">
+            <!-- Section header with title and count badge -->
             <div class="section-header">
                 Pending Invites
+                <!-- Red badge showing number of pending invites -->
                 <span class="badge">{{ invites_received|length }}</span>
             </div>
+            <!-- Section content with list of invites -->
             <div class="section-content">
+                <!-- Loop through each pending invite -->
                 {% for sender in invites_received %}
+                    <!-- Row for each invite -->
                     <div class="invite-item">
+                        <!-- Username of person who sent invite -->
                         <span class="invite-sender">{{ sender }}</span>
+                        <!-- Form to accept the invite -->
                         <form method="POST" action="/accept_invite" style="margin: 0;">
+                            <!-- Hidden field with current user's username -->
                             <input type="hidden" name="user" value="{{ username }}">
+                            <!-- Hidden field with sender's username -->
                             <input type="hidden" name="sender" value="{{ sender }}">
+                            <!-- Green accept button -->
                             <button type="submit" class="btn btn-success">Accept</button>
                         </form>
                     </div>
@@ -263,28 +318,40 @@
         </div>
         {% endif %}
 
-        <!-- Contacts List -->
+        <!-- Section for contacts list -->
         <div class="section">
+            <!-- Section header with title and optional count badge -->
             <div class="section-header">
                 Contacts
+                <!-- Show contact count badge if there are contacts -->
                 {% if contacts %}
                     <span class="badge">{{ contacts|length }}</span>
                 {% endif %}
             </div>
+            <!-- Section content with contacts list -->
             <div class="section-content">
+                <!-- Check if user has any contacts -->
                 {% if contacts %}
+                    <!-- Loop through each contact -->
                     {% for contact_username, full_name in contacts.items() %}
+                        <!-- Row for each contact -->
                         <div class="contact-item">
+                            <!-- Container for contact information -->
                             <div class="contact-info">
+                                <!-- Contact's display name -->
                                 <div class="contact-name">{{ full_name }}</div>
+                                <!-- Contact's username with @ symbol -->
                                 <div class="contact-username">@{{ contact_username }}</div>
                             </div>
+                            <!-- Form/link to start chat with this contact -->
                             <form method="get" action="{{ url_for('chat', username=username, contact=contact_username) }}" style="margin: 0;">
+                                <!-- Teal chat button -->
                                 <button type="submit" class="btn btn-chat">Chat</button>
                             </form>
                         </div>
                     {% endfor %}
                 {% else %}
+                    <!-- Message shown when user has no contacts yet -->
                     <div class="empty-state">
                         No contacts yet. Send some invites to get started!
                     </div>
@@ -293,7 +360,9 @@
         </div>
     </div>
 
+    <!-- JavaScript code for Firebase integration and user interactions -->
     <script>
+        // Firebase configuration object with API keys and database URL
         var firebaseConfig = {
             apiKey: "AIzaSyCgY0qvuCml114ujVhzUyfz2eZ4L0k4LKo",
             authDomain: "blitzchat-30890.firebaseapp.com",
@@ -304,40 +373,55 @@
             measurementId: "G-CNK3CLKQ60"
         };
 
+        // Initialize Firebase with the configuration
         firebase.initializeApp(firebaseConfig);
+        // Get reference to Firebase real-time database
         const db = firebase.database();
+        // Store current user's username from Flask template
         const currentUser = "{{ username }}";
 
+        // Function called when "Send Invite" button is clicked
         function searchAndSendInvite() {
+            // Get the username entered in the search box and remove extra spaces
             const recipient = document.getElementById('searchUser').value.trim();
+            // Check if user entered a username
             if (!recipient) {
                 alert("Please enter a username to invite.");
                 return;
             }
 
+            // Send HTTP POST request to Flask backend to send invite
             fetch('/send_invite', {
-                method: 'POST',
+                method: 'POST', // POST request method
                 headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded'
+                    'Content-Type': 'application/x-www-form-urlencoded' // Form data format
                 },
+                // Send current user as sender and entered username as recipient
                 body: `sender=${currentUser}&recipient=${recipient}`
             })
             .then(res => {
+                // Check if request was successful
                 if (res.ok) {
                     alert("Invite sent successfully!");
+                    // Clear the search input field
                     document.getElementById('searchUser').value = '';
+                    // Reload the page to show updated invite status
                     location.reload();
                 } else {
+                    // Show error message if invite failed
                     res.text().then(msg => alert(msg));
                 }
             })
             .catch(err => {
+                // Handle network or other errors
                 console.error('Error sending invite:', err);
                 alert('Error sending invite. Please try again.');
             });
         }
 
+        // Add event listener to search input for Enter key press
         document.getElementById('searchUser').addEventListener('keypress', function(e) {
+            // If user presses Enter key, send invite automatically
             if (e.key === 'Enter') {
                 searchAndSendInvite();
             }

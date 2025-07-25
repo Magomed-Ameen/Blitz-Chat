@@ -10,10 +10,20 @@ firebase_admin.initialize_app(
       
     })
 
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for, flash, session
+from functools import wraps
 
 app = Flask(__name__)
 app.secret_key = 'secret_key'
+
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'username' not in session:
+            flash('Please log in to access this page.')
+            return redirect(url_for('log_in'))
+        return f(*args, **kwargs)
+    return decorated_function
 
 users_dict = {}
 
@@ -44,6 +54,7 @@ def create_profile():
         "invites_received": {}
     })
 
+    session['username'] = username  # Create user session
     flash("Profile created successfully.")
     return redirect(url_for("chat_window", username=username))
 
@@ -59,6 +70,7 @@ def log_in():
     user = user_ref.get()
 
     if user and user['password'] == password:
+      session['username'] = username  # Create user session
       flash('LOGGED IN')
       return redirect(url_for("chat_window", username=username))
     else:
@@ -68,6 +80,7 @@ def log_in():
 
 
 @app.route('/send_invite',methods=['POST'])
+@login_required
 def send_invite():
   sender=request.form['sender']
   recipient=request.form['recipient']
@@ -84,6 +97,7 @@ def send_invite():
 
 
 @app.route('/accept_invite',methods=['POST'])
+@login_required
 def accept_invite():
   user = request.form['user']
   sender = request.form['sender']  # the one who sent the invite
@@ -106,7 +120,12 @@ def accept_invite():
 
 
 @app.route('/chat_window/<username>')
+@login_required
 def chat_window(username):
+  # Check if the logged-in user is trying to access their own chat window
+  if session['username'] != username:
+    flash('You can only access your own chat window.')
+    return redirect(url_for('chat_window', username=session['username']))
   user_ref = db.reference(f'users/{username}')
   user_data = user_ref.get()
 
@@ -136,7 +155,19 @@ def chat_window(username):
   )
 
 @app.route('/chat/<username>/<contact>', methods=['GET', 'POST'])
+@login_required
 def chat(username, contact):
+    # Check if the logged-in user is trying to access their own chat
+    if session['username'] != username:
+        flash('You can only access your own chats.')
+        return redirect(url_for('chat_window', username=session['username']))
+    
+    # Check if the contact is actually in the user's contact list
+    user_ref = db.reference(f'users/{username}')
+    user_data = user_ref.get()
+    if not user_data or contact not in user_data.get('contacts', {}):
+        flash('You can only chat with your contacts.')
+        return redirect(url_for('chat_window', username=username))
     chat_id = "_".join(sorted([username, contact]))
     chat_ref = db.reference(f'messages/{chat_id}')
 
@@ -158,6 +189,12 @@ def chat(username, contact):
     return render_template('chat.html', username=username, contact=contact, messages=messages)
   
 
+
+@app.route('/logout')
+def logout():
+    session.pop('username', None)
+    flash('You have been logged out.')
+    return redirect(url_for('log_in'))
 
 if __name__ == '__main__':
   app.run(host='0.0.0.0', port=5000, debug=True)

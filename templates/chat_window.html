@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>BlitzChat - Messenger</title>
+    <title>BlitzChat </title>
     <!-- Firebase JavaScript SDKs for real-time database functionality -->
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
@@ -25,7 +25,7 @@
         /* Top header bar that contains logo and username */
         .header {
             position: relative; /* Allows absolute positioning of child elements */
-            background: #050815; /* Dark blue background color */
+            background: #0e1539; /* Dark blue background color */
             border-bottom: 5px solid #6b6b6b; /* Subtle bottom border */
             padding: 12px 20px; /* 12px top/bottom, 20px left/right padding */
             display: flex; /* Horizontal layout for logo and text */
@@ -35,7 +35,7 @@
             z-index: 100; /* Ensure header appears above other content */
             box-shadow: 0 3px 5px rgba(0,0,0,0.05); /* Subtle shadow below header */
             overflow: hidden; /* Hide overflow for clean animation */
-            transition: background-color 1.5s ease; /* Simple color transition */
+            transition: background-color 0.39ss ease; /* Simple color transition */
             height: 60px; /* Fixed height for proper stripe display */
         }
 
@@ -46,7 +46,7 @@
             right: 0; /* Position on right side */
             width: 30px; /* Width of stripe */
             height: 100%; /* Full height of header */
-            background: lime; /* Lime green color */
+            background: #a8f41a; /* Lime green color */
             transform: skewX(-20deg); /* Slant the stripe to the left */
             transform-origin: top; /* Transform from top */
             transition: all 0.1s ease; /* Smooth transition for animations */
@@ -59,7 +59,7 @@
             right: 40px; /* Position with distance from first stripe */
             width: 30px; /* Width of stripe */
             height: 100%; /* Full height of header */
-            background: lime; /* Lime green color */
+            background: #a8f41a; /* Lime green color */
             transform: skewX(-20deg); /* Slant the stripe to the left */
             transform-origin: top; /* Transform from top */
             transition: all 0.1s ease; /* Smooth transition for animations */
@@ -74,13 +74,13 @@
             left: 0;
             width: 100%;
             height: 0; /* Initially no height */
-            background: #050815; /* Dark header color */
-            transition: height 1.5s ease; /* Smooth bottom-to-top transition */
+            background: #0e1539; /* Dark header color */
+            transition: height 0.39s ease; /* Smooth bottom-to-top transition */
         }
 
         /* Header hover state - simple background color change */
         .header:hover {
-            background-color: lime; /* Change to lime green background */
+            background-color: #a8f41a; /* Change to lime green background */
         }
 
         /* On hover, stripe overlays expand from bottom to top */
@@ -138,7 +138,7 @@
 
         /* Small red notification badge (shows number of invites/contacts) */
         .badge {
-            background: #dc3545; /* Red background */
+            background: black; /* Red background */
             color: white; /* White text */
             font-size: 11px; /* Small text size */
             padding: 2px 6px; /* Small padding around text */
@@ -404,7 +404,7 @@
                                 <!-- Contact's display name -->
                                 <div class="contact-name">{{ full_name }}</div>
                                 <!-- Contact's username with @ symbol -->
-                                <div class="contact-username">@{{ contact_username }}</div>
+                                <div class="contact-username">{{ contact_username }}</div>
                             </div>
                             <!-- Form/link to start chat with this contact -->
                             <form method="get" action="{{ url_for('chat', username=username, contact=contact_username) }}" style="margin: 0;">

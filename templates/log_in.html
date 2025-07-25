@@ -1,9 +1,30 @@
 <!DOCTYPE html>
 <html>
+    <style>
+        body{
+            background-color: gray;
+            font-family: Franklin Gothic Medium,Franklin Gothic,ITC Franklin Gothic,Arial,sans-serif; 
+
+        }
+        input[type="text"]{
+            border-radius:5px;
+
+            border: 3px solid slategray;
+            box-shadow: 5 9 10 2px rgba(0,123,255,0.1);
+
+        }
+        .loginbutton{
+            font-family: Franklin Gothic Medium,Franklin Gothic,ITC Franklin Gothic,Arial,sans-serif; 
+            background-color: #030c44;
+            color: silver;
+            border-radius: 5px
+        }
+    </style>
 <head>
     <title>Log In</title>
 </head>
 <body>
+    <h1 style='align-content: center;'><img src="{{ url_for('static', filename='BlitzChatLogo.png') }}" alt="BlitzChat Logo"></h1>
     <h2>Sign In</h2>
     {% with messages = get_flashed_messages() %}
       {% if messages %}
@@ -15,7 +36,7 @@
         <input type="text" name="username" required><br><br>
         <label>Password:</label><br>
         <input type="password" name="password" required><br><br>
-        <button type="submit">Sign In</button>
+        <button class='loginbutton'type="submit">Sign In</button>
     </form>
     <p>Don't have an account? <a href="{{ url_for('create_profile') }}">Sign Up</a></p>
 </body>

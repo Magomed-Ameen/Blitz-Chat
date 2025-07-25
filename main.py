@@ -16,15 +16,15 @@ from functools import wraps
 
 # Firebase config for frontend
 FIREBASE_CONFIG = {
-    'apiKey': os.environ.get('FIREBASE_API_KEY'),
-    'authDomain': os.environ.get('FIREBASE_AUTH_DOMAIN'),
-    'databaseURL': os.environ.get('FIREBASE_DATABASE_URL'),
-    'projectId': os.environ.get('FIREBASE_PROJECT_ID'),
-    'storageBucket': os.environ.get('FIREBASE_STORAGE_BUCKET')
+    'apiKey': os.environ.get('FIREBASE_API_KEY', 'AIzaSyCgY0qvuCml114ujVhzUyfz2eZ4L0k4LKo'),
+    'authDomain': os.environ.get('FIREBASE_AUTH_DOMAIN', 'blitzchat-30890.firebaseapp.com'),
+    'databaseURL': os.environ.get('FIREBASE_DATABASE_URL', 'https://blitzchat-30890-default-rtdb.europe-west1.firebasedatabase.app'),
+    'projectId': os.environ.get('FIREBASE_PROJECT_ID', 'blitzchat-30890'),
+    'storageBucket': os.environ.get('FIREBASE_STORAGE_BUCKET', 'blitzchat-30890.appspot.com')
 }
 
 app = Flask(__name__)
-app.secret_key = 'secret_key'
+app.secret_key = os.environ.get('FLASK_SECRET_KEY', 'your-secret-key-here-change-this')
 
 def login_required(f):
     @wraps(f)
@@ -34,6 +34,12 @@ def login_required(f):
             return redirect(url_for('log_in'))
         return f(*args, **kwargs)
     return decorated_function
+
+def check_user_access(requested_username):
+    """Check if the logged-in user can access the requested username's data"""
+    if 'username' not in session:
+        return False
+    return session['username'] == requested_username
 
 users_dict = {}
 
@@ -133,9 +139,9 @@ def accept_invite():
 @login_required
 def chat_window(username):
   # Check if the logged-in user is trying to access their own chat window
-  if session['username'] != username:
-    flash('You can only access your own chat window.')
-    return redirect(url_for('chat_window', username=session['username']))
+  if not check_user_access(username):
+    flash('Access denied. Please log in with the correct account.')
+    return redirect(url_for('log_in'))
   user_ref = db.reference(f'users/{username}')
   user_data = user_ref.get()
 
@@ -169,9 +175,9 @@ def chat_window(username):
 @login_required
 def chat(username, contact):
     # Check if the logged-in user is trying to access their own chat
-    if session['username'] != username:
-        flash('You can only access your own chats.')
-        return redirect(url_for('chat_window', username=session['username']))
+    if not check_user_access(username):
+        flash('Access denied. Please log in with the correct account.')
+        return redirect(url_for('log_in'))
     
     # Check if the contact is actually in the user's contact list
     user_ref = db.reference(f'users/{username}')

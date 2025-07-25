@@ -17,22 +17,23 @@
         /* Main body styling - sets font family, background color, text color, and line spacing */
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Modern, clean font stack */
-            background: #f8f9fa; /* Light gray background for the entire page */
+            background: #080c21; /* Light gray background for the entire page */
             color: #2c3e50; /* Dark blue-gray text color */
             line-height: 1.4; /* Spacing between lines of text */
         }
 
         /* Top header bar that contains logo and username */
         .header {
-            background: white; /* White background for header */
-            border-bottom: 1px solid #e9ecef; /* Subtle bottom border */
+            background: #050815; /* #bdff24White background for header */
+            border-bottom: 5px solid #6b6b6b; /* Subtle bottom border */
+            
             padding: 12px 20px; /* 12px top/bottom, 20px left/right padding */
             display: flex; /* Horizontal layout for logo and text */
             align-items: center; /* Vertically center items in header */
             position: sticky; /* Header stays at top when scrolling */
             top: 0; /* Stick to very top of viewport */
             z-index: 100; /* Ensure header appears above other content */
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05); /* Subtle shadow below header */
+            box-shadow: 0 3px 5px rgba(0,0,0,0.05); /* Subtle shadow below header */
         }
 
         /* Logo image in header */
@@ -57,8 +58,9 @@
 
         /* Each section box (Add Contact, Pending Invites, Contacts) */
         .section {
-            background: white; /* White background for each section */
-            border: 1px solid #e9ecef; /* Light gray border around section */
+            background: #364947; /* White background for each section */
+            border: 3px solid #e9ecef; /* Light gray border around section */
+            
             border-radius: 6px; /* Rounded corners */
             margin-bottom: 16px; /* Space between sections */
             overflow: hidden; /* Prevents content from overflowing rounded corners */
@@ -66,12 +68,12 @@
 
         /* Header area of each section (contains title and badge) */
         .section-header {
-            background: #f8f9fa; /* Light gray background for section headers */
+            background: #0e3300; /* Light gray background for section headers */
             padding: 8px 16px; /* 8px top/bottom, 16px left/right */
             border-bottom: 1px solid #e9ecef; /* Border separating header from content */
             font-size: 14px; /* Text size for section titles */
             font-weight: 600; /* Bold font weight */
-            color: #6c757d; /* Medium gray text color */
+            color: #afaf97; /* Medium gray text color */
             display: flex; /* Horizontal layout */
             justify-content: space-between; /* Title on left, badge on right */
             align-items: center; /* Vertically center items */
@@ -131,18 +133,18 @@
 
         /* Blue primary button (Send Invite button) */
         .btn-primary {
-            background: #007bff; /* Blue background */
+            background: #000a47; /* Blue background */
             color: white; /* White text */
         }
 
         /* Blue button when user hovers over it */
         .btn-primary:hover {
-            background: #0056b3; /* Darker blue on hover */
+            background: yellowgreen; /* Darker blue on hover */
         }
 
         /* Green success button (Accept invite button) */
         .btn-success {
-            background: #28a745; /* Green background */
+            background: #000a47; /* Green background */
             color: white; /* White text */
             padding: 6px 12px; /* Smaller padding than primary buttons */
             font-size: 12px; /* Smaller text size */
@@ -150,12 +152,12 @@
 
         /* Green button when user hovers over it */
         .btn-success:hover {
-            background: #1e7e34; /* Darker green on hover */
+            background: yellowgreen; /* Darker green on hover */
         }
 
         /* Teal chat button (used for starting chats) */
         .btn-chat {
-            background: #17a2b8; /* Teal background */
+            background: #000a47; /* Teal background */
             color: white; /* White text */
             padding: 6px 12px; /* Smaller padding */
             font-size: 12px; /* Smaller text size */
@@ -163,7 +165,7 @@
 
         /* Teal button when user hovers over it */
         .btn-chat:hover {
-            background: #117a8b; /* Darker teal on hover */
+            background: yellowgreen; /* Darker teal on hover */
         }
 
         /* Each row in the pending invites list */
@@ -211,14 +213,14 @@
         /* Contact's display name */
         .contact-name {
             font-weight: 500; /* Medium font weight */
-            color: #495057; /* Medium gray color */
-            font-size: 14px; /* Text size */
+            color: #080c21; /* Medium gray color */
+            font-size: 16px; /* Text size */
         }
 
         /* Contact's username (with @ symbol) */
         .contact-username {
-            font-size: 12px; /* Smaller text size */
-            color: #6c757d; /* Lighter gray color */
+            font-size: 15px; /* Smaller text size */
+            color: #0a0f29; /* Lighter gray color */
         }
 
         /* Message shown when lists are empty */

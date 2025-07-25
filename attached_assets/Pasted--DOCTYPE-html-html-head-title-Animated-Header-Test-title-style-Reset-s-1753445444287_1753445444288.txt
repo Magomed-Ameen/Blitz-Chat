@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Animated Header Test</title>
+    <style>
+        /* Reset styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f0f0f0;
+            padding: 20px;
+        }
+
+        /* Main animated header container */
+        .animated-header {
+            position: relative; /* Allows absolute positioning of child elements */
+            background: #050815; /* Dark blue background color */
+            height: 120px; /* Significant height as requested */
+            width: 100%; /* Full width */
+            display: flex; /* Horizontal layout for content */
+            align-items: center; /* Vertically center content */
+            padding: 0 20px; /* Left/right padding */
+            overflow: hidden; /* Hide overflow for clean animation */
+        }
+
+        /* Header text content */
+        .header-content {
+            z-index: 10; /* Ensure content appears above animated backgrounds */
+            position: relative; /* Position relative to control z-index */
+        }
+
+        .header-content h2 {
+            color: #ffffff; /* White text */
+            font-size: 24px; /* Text size */
+            font-weight: 500; /* Medium font weight */
+        }
+
+        /* First slanted stripe on the right side */
+        .stripe-1 {
+            position: absolute; /* Position absolutely within header */
+            top: 0; /* Start from top */
+            right: 0; /* Position on right side */
+            width: 30px; /* Width of stripe */
+            height: 100%; /* Full height of header */
+            background: lime; /* Lime green color */
+            transform: skewX(-20deg); /* Slant the stripe to the left */
+            transform-origin: top; /* Transform from top */
+            transition: all 0.1s ease; /* Smooth transition for animations */
+        }
+
+        /* Second slanted stripe, positioned next to first one */
+        .stripe-2 {
+            position: absolute; /* Position absolutely within header */
+            top: 0; /* Start from top */
+            right: 20px; /* Position slightly left of first stripe */
+            width: 30px; /* Width of stripe */
+            height: 100%; /* Full height of header */
+            background: lime; /* Lime green color */
+            transform: skewX(-20deg); /* Slant the stripe to the left */
+            transform-origin: top; /* Transform from top */
+            transition: all 0.1s ease; /* Smooth transition for animations */
+        }
+
+        /* Animated background overlay that appears on hover */
+        .hover-overlay {
+            position: absolute; /* Position absolutely within header */
+            bottom: 0; /* Start from bottom */
+            left: 0; /* Start from left */
+            width: 0; /* Initially no width */
+            height: 0; /* Initially no height */
+            background: lime; /* Lime green background */
+            transition: all 0.1s ease; /* Smooth 1.5s transition */
+            transform-origin: bottom left; /* Animation starts from bottom left */
+        }
+
+        /* Header hover state - triggers the animation */
+        .animated-header:hover .hover-overlay {
+            width: 100%; /* Expand to full width */
+            height: 100%; /* Expand to full height */
+        }
+
+        /* On hover, stripes change to the original header color */
+        .animated-header:hover .stripe-1,
+        .animated-header:hover .stripe-2 {
+            background: #050815; /* Change to original header color */
+        }
+
+        /* Demo content below header */
+        .demo-content {
+            margin-top: 30px;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+        }
+
+        .demo-content h3 {
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .demo-content p {
+            color: #666;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated header implementation -->
+    <div class="animated-header">
+        <!-- Animated overlay that expands on hover -->
+        <div class="hover-overlay"></div>
+
+        <!-- Right-side slanted stripes -->
+        <div class="stripe-1"></div>
+        <div class="stripe-2"></div>
+
+        <!-- Header content (just text, no logo) -->
+        <div class="header-content">
+            <h2>Test Header Animation</h2>
+        </div>
+    </div>
+
+    <!-- Demo content -->
+    <div class="demo-content">
+        <h3>Header Animation Test</h3>
+        <p>
+            Hover over the header to see the lime green background sweep from bottom-left to top-right 
+            while the stripes change to the original header color. The animation has a 1.5s duration 
+            and reverses when you stop hovering.
+        </p>
+        <p>
+            The stripes are slanted using CSS transform skewX(-20deg) and positioned on the right side.
+        </p>
+    </div>
+</body>
+</html>

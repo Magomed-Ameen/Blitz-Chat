@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -27,20 +26,12 @@
             align-items: center; /* Vertically center content */
             padding: 0 20px; /* Left/right padding */
             overflow: hidden; /* Hide overflow for clean animation */
-            transition: none; /* No transition on main background initially */
         }
 
-        /* Logo and text content */
+        /* Header text content */
         .header-content {
-            display: flex; /* Horizontal layout */
-            align-items: center; /* Vertically center items */
             z-index: 10; /* Ensure content appears above animated backgrounds */
             position: relative; /* Position relative to control z-index */
-        }
-
-        .header-content img {
-            height: 40px; /* Logo size */
-            margin-right: 15px; /* Space between logo and text */
         }
 
         .header-content h2 {
@@ -99,48 +90,7 @@
             background: #050815; /* Change to original header color */
         }
 
-        /* Alternative implementation using clip-path for smoother diagonal animation */
-        .animated-header-alt {
-            position: relative;
-            background: #050815;
-            height: 120px;
-            width: 100%;
-            display: flex;
-            align-items: center;
-            padding: 0 20px;
-            overflow: hidden;
-            margin-top: 30px; /* Space between headers */
-        }
-
-        /* Alternative hover overlay using clip-path for diagonal sweep */
-        .hover-overlay-alt {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: lime;
-            /* Clip-path creates diagonal animation from bottom-left to top-right */
-            clip-path: polygon(0 100%, 0 100%, 0 100%);
-            transition: clip-path 1.5s ease;
-        }
-
-        /* Hover state for alternative implementation */
-        .animated-header-alt:hover .hover-overlay-alt {
-            /* Expands diagonally from bottom-left to cover entire area */
-            clip-path: polygon(0 100%, 100% 0, 100% 100%);
-        }
-
-        /* Stripes for alternative header */
-        .animated-header-alt .stripe-1 {
-            right: 0;
-        }
-
-        .animated-header-alt .stripe-2 {
-            right: 20px;
-        }
-
-        /* Demo content below headers */
+        /* Demo content below header */
         .demo-content {
             margin-top: 30px;
             padding: 20px;
@@ -160,35 +110,18 @@
     </style>
 </head>
 <body>
-    <!-- First animated header implementation -->
+    <!-- Animated header implementation -->
     <div class="animated-header">
         <!-- Animated overlay that expands on hover -->
         <div class="hover-overlay"></div>
-        
-        <!-- Right-side slanted stripes -->
-        <div class="stripe-1"></div>
-        <div class="stripe-2"></div>
-        
-        <!-- Header content (logo and text) -->
-        <div class="header-content">
-            <img src="{{ url_for('static', filename='BlitzChatLogo.png') }}" alt="BlitzChat Logo">
-            <h2>Test Header Animation</h2>
-        </div>
-    </div>
 
-    <!-- Alternative implementation with clip-path for smoother diagonal animation -->
-    <div class="animated-header-alt">
-        <!-- Alternative animated overlay using clip-path -->
-        <div class="hover-overlay-alt"></div>
-        
         <!-- Right-side slanted stripes -->
         <div class="stripe-1"></div>
         <div class="stripe-2"></div>
-        
-        <!-- Header content -->
+
+        <!-- Header content (just text, no logo) -->
         <div class="header-content">
-            <img src="{{ url_for('static', filename='BlitzChatLogo.png') }}" alt="BlitzChat Logo">
-            <h2>Alternative Animation</h2>
+            <h2>Test Header Animation</h2>
         </div>
     </div>
 
@@ -196,16 +129,11 @@
     <div class="demo-content">
         <h3>Header Animation Test</h3>
         <p>
-            <strong>First Header:</strong> Uses width/height expansion for the hover effect. 
-            Hover over it to see the lime green background sweep from bottom-left to top-right, 
-            while the stripes change color.
+            Hover over the header to see the lime green background sweep from bottom-left to top-right 
+            while the stripes change to the original header color. The animation has a 1.5s duration 
+            and reverses when you stop hovering.
         </p>
         <p>
-            <strong>Second Header:</strong> Uses clip-path for a more precise diagonal sweep animation. 
-            This creates a cleaner diagonal transition effect.
-        </p>
-        <p>
-            Both animations have a 1.5s duration and reverse when you stop hovering. 
             The stripes are slanted using CSS transform skewX(-20deg) and positioned on the right side.
         </p>
     </div>

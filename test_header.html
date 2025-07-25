@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -26,6 +27,7 @@
             align-items: center; /* Vertically center content */
             padding: 0 20px; /* Left/right padding */
             overflow: hidden; /* Hide overflow for clean animation */
+            transition: background-color 1.5s ease; /* Simple color transition */
         }
 
         /* Header text content */
@@ -45,11 +47,10 @@
             position: absolute; /* Position absolutely within header */
             top: 0; /* Start from top */
             right: 0; /* Position on right side */
-            width: 25px; /* Width of stripe */
+            width: 30px; /* Width of stripe */
             height: 100%; /* Full height of header */
             background: lime; /* Lime green color */
             transform: skewX(-20deg); /* Slant the stripe to the left */
-            transform-origin: bottom; /* Transform from bottom for upward transition */
             overflow: hidden; /* Hide overflow for clean animation */
         }
 
@@ -65,16 +66,15 @@
             transition: height 1.5s ease; /* Smooth bottom-to-top transition */
         }
 
-        /* Second slanted stripe, positioned with spacing from first one */
+        /* Second slanted stripe, positioned with more distance from first one */
         .stripe-2 {
             position: absolute; /* Position absolutely within header */
             top: 0; /* Start from top */
-            right: 40px; /* More distance from first stripe */
-            width: 25px; /* Width of stripe */
+            right: 50px; /* More distance from first stripe */
+            width: 30px; /* Width of stripe */
             height: 100%; /* Full height of header */
             background: lime; /* Lime green color */
             transform: skewX(-20deg); /* Slant the stripe to the left */
-            transform-origin: bottom; /* Transform from bottom for upward transition */
             overflow: hidden; /* Hide overflow for clean animation */
         }
 
@@ -90,23 +90,9 @@
             transition: height 1.5s ease; /* Smooth bottom-to-top transition */
         }
 
-        /* Animated background overlay - diagonal slash effect */
-        .hover-overlay {
-            position: absolute; /* Position absolutely within header */
-            bottom: 0; /* Start from bottom */
-            left: 0; /* Start from left */
-            width: 0; /* Initially no width */
-            height: 0; /* Initially no height */
-            background: lime; /* Lime green background */
-            transition: all 1.5s ease; /* Smooth 1.5s transition */
-            transform-origin: bottom left; /* Animation starts from bottom left */
-            transform: skewY(-12deg); /* Create diagonal slash effect */
-        }
-
-        /* Header hover state - triggers the diagonal sweep animation */
-        .animated-header:hover .hover-overlay {
-            width: 141%; /* Expand beyond 100% to cover diagonal area */
-            height: 141%; /* Expand beyond 100% to cover diagonal area */
+        /* Header hover state - simple background color change */
+        .animated-header:hover {
+            background-color: lime; /* Change to lime green background */
         }
 
         /* On hover, stripe overlays expand from bottom to top */
@@ -137,9 +123,6 @@
 <body>
     <!-- Animated header implementation -->
     <div class="animated-header">
-        <!-- Animated overlay that expands on hover -->
-        <div class="hover-overlay"></div>
-
         <!-- Right-side slanted stripes -->
         <div class="stripe-1"></div>
         <div class="stripe-2"></div>
@@ -154,12 +137,12 @@
     <div class="demo-content">
         <h3>Header Animation Test</h3>
         <p>
-            Hover over the header to see the lime green background sweep from bottom-left to top-right 
-            while the stripes change to the original header color. The animation has a 1.5s duration 
+            Hover over the header to see the simple color change to lime green 
+            while the stripes change color from bottom to top. The animation has a 1.5s duration 
             and reverses when you stop hovering.
         </p>
         <p>
-            The stripes are slanted using CSS transform skewX(-20deg) and positioned on the right side.
+            The stripes are slanted using CSS transform skewX(-20deg) and positioned on the right side with increased spacing.
         </p>
     </div>
 </body>

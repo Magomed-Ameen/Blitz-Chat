@@ -289,6 +289,30 @@
             font-style: italic; /* Italic text style */
         }
 
+        /* Logout button positioned in bottom right corner */
+        .logout-btn {
+            position: fixed; /* Fixed position relative to viewport */
+            bottom: 20px; /* 20px from bottom of screen */
+            right: 20px; /* 20px from right side of screen */
+            background: #dc3545; /* Red background */
+            color: white; /* White text */
+            text-decoration: none; /* Remove underline */
+            padding: 12px 20px; /* Comfortable padding */
+            border-radius: 6px; /* Rounded corners */
+            font-size: 14px; /* Text size */
+            font-weight: 500; /* Medium font weight */
+            z-index: 1000; /* Ensure it appears above all content */
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2); /* Subtle shadow */
+            transition: all 0.3s ease; /* Smooth hover transition */
+        }
+
+        /* Logout button hover effect */
+        .logout-btn:hover {
+            background: #c82333; /* Darker red on hover */
+            transform: translateY(-2px); /* Slight lift effect */
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3); /* Enhanced shadow on hover */
+        }
+
         /* Responsive design for mobile devices */
         @media (max-width: 768px) {
             /* Reduce container padding on mobile */
@@ -327,8 +351,7 @@
         <img src="{{ url_for('static', filename='BlitzChatLogo.png') }}" alt="BlitzChat Logo">
         <!-- Current user's username -->
         <h2>{{ username }}</h2>
-        <!-- Logout button -->
-        <a href="{{ url_for('logout') }}" style="position: absolute; bottom: 10px; right: 10px; color: white; text-decoration: none; padding: 8px 16px; background: #dc3545; border-radius: 4px; z-index: 10;">Logout</a>
+        
     </div>
 
     <!-- Main content container -->
@@ -493,5 +516,8 @@
             }
         });
     </script>
+
+    <!-- Logout button positioned in bottom right corner -->
+    <a href="{{ url_for('logout') }}" class="logout-btn">Logout</a>
 </body>
 </html>

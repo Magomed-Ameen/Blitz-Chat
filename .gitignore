@@ -161,4 +161,4 @@ cython_debug/
 
 # Firebase sensitive files
 firebase_config.json
-m.txt
+m.txtfirebase_config.json 

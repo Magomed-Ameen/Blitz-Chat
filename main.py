@@ -1,30 +1,32 @@
 import time
 import os
+import json
 import firebase_admin
 from firebase_admin import credentials, db
 
-cred = credentials.Certificate("firebase_config.json")
-firebase_admin.initialize_app(
-    cred, {
-        "databaseURL":
-        "https://blitzchat-30890-default-rtdb.europe-west1.firebasedatabase.app"
-      
-    })
+# Load the Firebase credentials from the secret
+firebase_json = os.getenv("FIREBASE_CREDENTIALS_JSON")
+cred_dict = json.loads(firebase_json)
+cred = credentials.Certificate(cred_dict)
+
+firebase_admin.initialize_app(cred, {
+    "databaseURL": os.getenv("FIREBASE_DATABASE_URL")
+})
 
 from flask import Flask, render_template, request, redirect, url_for, flash, session
 from functools import wraps
 
 # Firebase config for frontend
 FIREBASE_CONFIG = {
-    'apiKey': os.environ.get('FIREBASE_API_KEY', 'AIzaSyCgY0qvuCml114ujVhzUyfz2eZ4L0k4LKo'),
-    'authDomain': os.environ.get('FIREBASE_AUTH_DOMAIN', 'blitzchat-30890.firebaseapp.com'),
-    'databaseURL': os.environ.get('FIREBASE_DATABASE_URL', 'https://blitzchat-30890-default-rtdb.europe-west1.firebasedatabase.app'),
-    'projectId': os.environ.get('FIREBASE_PROJECT_ID', 'blitzchat-30890'),
-    'storageBucket': os.environ.get('FIREBASE_STORAGE_BUCKET', 'blitzchat-30890.appspot.com')
+    'apiKey': os.environ.get('FIREBASE_API_KEY' ),
+    'authDomain': os.environ.get('FIREBASE_AUTH_DOMAIN' ),
+    'databaseURL': os.environ.get('FIREBASE_DATABASE_URL'),
+    'projectId': os.environ.get('FIREBASE_PROJECT_ID'),
+    'storageBucket': os.environ.get('FIREBASE_STORAGE_BUCKET')
 }
 
 app = Flask(__name__)
-app.secret_key = os.environ.get('FLASK_SECRET_KEY', 'your-secret-key-here-change-this')
+app.secret_key = os.environ.get('FLASK_SECRET_KEY')
 
 def login_required(f):
     @wraps(f)

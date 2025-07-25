@@ -24,9 +24,9 @@
 
         /* Top header bar that contains logo and username */
         .header {
-            background: #050815; /* #bdff24White background for header */
+            position: relative; /* Allows absolute positioning of child elements */
+            background: #050815; /* Dark blue background color */
             border-bottom: 5px solid #6b6b6b; /* Subtle bottom border */
-            
             padding: 12px 20px; /* 12px top/bottom, 20px left/right padding */
             display: flex; /* Horizontal layout for logo and text */
             align-items: center; /* Vertically center items in header */
@@ -34,19 +34,76 @@
             top: 0; /* Stick to very top of viewport */
             z-index: 100; /* Ensure header appears above other content */
             box-shadow: 0 3px 5px rgba(0,0,0,0.05); /* Subtle shadow below header */
+            overflow: hidden; /* Hide overflow for clean animation */
+            transition: background-color 1.5s ease; /* Simple color transition */
+            height: 60px; /* Fixed height for proper stripe display */
+        }
+
+        /* First slanted stripe on the right side */
+        .stripe-1 {
+            position: absolute; /* Position absolutely within header */
+            top: 0; /* Start from top */
+            right: 0; /* Position on right side */
+            width: 30px; /* Width of stripe */
+            height: 100%; /* Full height of header */
+            background: lime; /* Lime green color */
+            transform: skewX(-20deg); /* Slant the stripe to the left */
+            transform-origin: top; /* Transform from top */
+            transition: all 0.1s ease; /* Smooth transition for animations */
+        }
+
+        /* Second slanted stripe, positioned next to first one */
+        .stripe-2 {
+            position: absolute; /* Position absolutely within header */
+            top: 0; /* Start from top */
+            right: 40px; /* Position with distance from first stripe */
+            width: 30px; /* Width of stripe */
+            height: 100%; /* Full height of header */
+            background: lime; /* Lime green color */
+            transform: skewX(-20deg); /* Slant the stripe to the left */
+            transform-origin: top; /* Transform from top */
+            transition: all 0.1s ease; /* Smooth transition for animations */
+        }
+
+        /* Stripe overlay animations */
+        .stripe-1::before,
+        .stripe-2::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 0; /* Initially no height */
+            background: #050815; /* Dark header color */
+            transition: height 1.5s ease; /* Smooth bottom-to-top transition */
+        }
+
+        /* Header hover state - simple background color change */
+        .header:hover {
+            background-color: lime; /* Change to lime green background */
+        }
+
+        /* On hover, stripe overlays expand from bottom to top */
+        .header:hover .stripe-1::before,
+        .header:hover .stripe-2::before {
+            height: 100%; /* Expand to full height from bottom */
         }
 
         /* Logo image in header */
         .header img {
             height: 28px; /* Fixed height for logo */
             margin-right: 10px; /* Space between logo and username */
+            z-index: 10; /* Ensure logo appears above stripes */
+            position: relative; /* Position relative to control z-index */
         }
 
         /* Username text in header */
         .header h2 {
             font-size: 18px; /* Text size for username */
             font-weight: 500; /* Medium font weight (not too bold) */
-            color: #495057; /* Medium gray color */
+            color: #ffffff; /* White color for visibility */
+            z-index: 10; /* Ensure text appears above stripes */
+            position: relative; /* Position relative to control z-index */
         }
 
         /* Main content container - centers content and limits width */
@@ -262,6 +319,10 @@
 <body>
     <!-- Top header bar with logo and username -->
     <div class="header">
+        <!-- Right-side slanted stripes -->
+        <div class="stripe-1"></div>
+        <div class="stripe-2"></div>
+        
         <!-- BlitzChat logo image -->
         <img src="{{ url_for('static', filename='BlitzChatLogo.png') }}" alt="BlitzChat Logo">
         <!-- Current user's username -->

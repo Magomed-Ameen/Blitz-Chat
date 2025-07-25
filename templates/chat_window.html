@@ -453,13 +453,11 @@
     <script>
         // Firebase configuration object with API keys and database URL
         var firebaseConfig = {
-            apiKey: "AIzaSyCgY0qvuCml114ujVhzUyfz2eZ4L0k4LKo",
-            authDomain: "blitzchat-30890.firebaseapp.com",
-            projectId: "blitzchat-30890",
-            storageBucket: "blitzchat-30890.firebasestorage.com",
-            messagingSenderId: "256345196234",
-            appId: "1:256345196234:web:f80c48f616f8d30f3f9633",
-            measurementId: "G-CNK3CLKQ60"
+            apiKey: "{{ firebase_config.apiKey }}",
+            authDomain: "{{ firebase_config.authDomain }}",
+            databaseURL: "{{ firebase_config.databaseURL }}",
+            projectId: "{{ firebase_config.projectId }}",
+            storageBucket: "{{ firebase_config.storageBucket }}"
         };
 
         // Initialize Firebase with the configuration

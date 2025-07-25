@@ -1,4 +1,5 @@
 import time
+import os
 import firebase_admin
 from firebase_admin import credentials, db
 
@@ -12,6 +13,15 @@ firebase_admin.initialize_app(
 
 from flask import Flask, render_template, request, redirect, url_for, flash, session
 from functools import wraps
+
+# Firebase config for frontend
+FIREBASE_CONFIG = {
+    'apiKey': os.environ.get('FIREBASE_API_KEY'),
+    'authDomain': os.environ.get('FIREBASE_AUTH_DOMAIN'),
+    'databaseURL': os.environ.get('FIREBASE_DATABASE_URL'),
+    'projectId': os.environ.get('FIREBASE_PROJECT_ID'),
+    'storageBucket': os.environ.get('FIREBASE_STORAGE_BUCKET')
+}
 
 app = Flask(__name__)
 app.secret_key = 'secret_key'
@@ -151,7 +161,8 @@ def chat_window(username):
       username=username,
       contacts=contacts,
       invites_received=invites_received,
-      invites_sent=invites_sent
+      invites_sent=invites_sent,
+      firebase_config=FIREBASE_CONFIG
   )
 
 @app.route('/chat/<username>/<contact>', methods=['GET', 'POST'])
@@ -186,7 +197,7 @@ def chat(username, contact):
     # Get messages
     messages = chat_ref.get() or {}
 
-    return render_template('chat.html', username=username, contact=contact, messages=messages)
+    return render_template('chat.html', username=username, contact=contact, messages=messages, firebase_config=FIREBASE_CONFIG)
   
 
 

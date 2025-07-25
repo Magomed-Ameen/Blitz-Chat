@@ -120,11 +120,11 @@
 
   <script>
     const firebaseConfig = {
-      apiKey: "AIzaSyCgY0qvuCml114ujVhzUyfz2eZ4L0k4LKo",
-      authDomain: "blitzchat-30890.firebaseapp.com",
-      databaseURL: "https://blitzchat-30890-default-rtdb.europe-west1.firebasedatabase.app",
-      projectId: "blitzchat-30890",
-      storageBucket: "blitzchat-30890.appspot.com"
+      apiKey: "{{ firebase_config.apiKey }}",
+      authDomain: "{{ firebase_config.authDomain }}",
+      databaseURL: "{{ firebase_config.databaseURL }}",
+      projectId: "{{ firebase_config.projectId }}",
+      storageBucket: "{{ firebase_config.storageBucket }}"
     };
 
     firebase.initializeApp(firebaseConfig);

@@ -200,7 +200,7 @@ def chat(username, contact):
         chat_ref.push(new_msg)
         return redirect(url_for('chat', username=username, contact=contact))
 
-    # Get messages
+    #Get messages
     messages = chat_ref.get() or {}
 
     return render_template('chat.html', username=username, contact=contact, messages=messages, firebase_config=FIREBASE_CONFIG)
@@ -214,4 +214,4 @@ def logout():
     return redirect(url_for('log_in'))
 
 if __name__ == '__main__':
-  app.run(host='0.0.0.0', port=5000, debug=True)
+  app.run(host='0.0.0.0', port=5000)#debug=True
